@@ -2,9 +2,6 @@ import  json
 from datetime import datetime
 
 
-
-
-
 def get_data():
     with open('operations.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -12,12 +9,12 @@ def get_data():
 
 
 def get_filtered_data(data, filter_empty_from=False):
-    print(len(data))
+    # print(len(data))
     data = [x for x in data if "state" in x and x["state"] == "EXECUTED"]
-    print(len(data))
+    # print(len(data))
     if filter_empty_from:
         data = [x for x in data if "to" in x]
-    print(len(data))
+    # print(len(data))
     return data
 
 
@@ -27,17 +24,18 @@ def get_last_values(data, count_last_values):
     return data
 
 
+
 def get_formatted_data(data):
     formatted_data = []
     for row in data:
-        date = datetime.strptime(row['date'],"%Y-%m-%dT%H:%M:%S.%f").strftime('%d.%m.%y')
+        date = datetime.strptime(row['date'], "%Y-%m-%dT%H:%M:%S.%f").strftime('%d.%m.%Y')
         description = row['description']
-        recipient = f"{row['to'].split()[0]} {row['to'][-4:]}"
+        recipient = f"Счет **{row['to'][-4:]}"
         operations_amount = f"{row['operationAmount']['amount']} {row['operationAmount']['currency']['name']}"
         if 'from' in row:
             sender = row['from'].split()
             from_bill = sender.pop(-1)
-            from_bill = f'{from_bill[:4]} {from_bill[4:6]} **** {from_bill[-4:]}'
+            from_bill = f'{from_bill[:4]} {from_bill[4:6]}** **** {from_bill[-4:]}'
             from_info = ' '.join(sender)
         else:
             from_info, from_bill = '', ''
@@ -46,5 +44,4 @@ def get_formatted_data(data):
 {from_info} {from_bill} -> {recipient}
 {operations_amount}''')
     return formatted_data
-
 
